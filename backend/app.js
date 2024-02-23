@@ -4,6 +4,19 @@ const app = express();
 
 dotenv.config({ path: "backend/config/config.env" });
 
-app.listen(3000, () => {
-  console.log(`Server Started on Server 3000`);
+//connecting to database
+connectDatabase();
+
+app.use(express.json());
+
+// import all routes
+import productRoutes from "./routes/product.js";
+import { connectDatabase } from "./config/dbConnect.js";
+
+app.use("/api/v1", productRoutes);
+
+app.listen(process.env.PORT, () => {
+  console.log(
+    `Server Started on PORT: ${process.env.PORT} in ${process.env.NODE_ENV} `,
+  );
 });
