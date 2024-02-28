@@ -21,6 +21,7 @@ export const getProducts = catchAsyncError(async (req, res) => {
 
 //create new product
 export const newProduct = catchAsyncError(async (req, res) => {
+  req.body.user = req.user._id;
   const product = await Product.create(req.body);
   res.status(200).json({ product });
 });
