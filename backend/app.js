@@ -22,11 +22,13 @@ app.use(cookieParser());
 // import all routes
 import productRoutes from "./routes/product.js";
 import authRoutes from "./routes/auth.js";
+import ordersRoutes from "./routes/order.js";
 
 import { connectDatabase } from "./config/dbConnect.js";
 
 app.use("/api/v1", productRoutes);
 app.use("/api/v1", authRoutes);
+app.use("/api/v1", ordersRoutes);
 
 app.use(errorMiddleware);
 

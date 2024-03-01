@@ -108,3 +108,77 @@ export const resetPassword = catchAsyncError(async (req, res, next) => {
   await user.save();
   sendToken(user, 200, res);
 });
+
+export const getUserProfile = catchAsyncError(async (req, res, next) => {
+  const user = await User.findById(req?.user?._id);
+
+  res.status(200).json({ user });
+});
+
+export const updatePassword = catchAsyncError(async (req, res, next) => {
+  const user = await User.findById(req?.user?._id).select("+password");
+
+  const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
+
+  if (!isPasswordMatched) {
+    return next(new ErrorHandler("Old password is incorrect", 400));
+  }
+
+  user.password = req.body.newPassword;
+  await user.save();
+
+  res.status(200).json({ success: true });
+});
+
+export const updateUserProfile = catchAsyncError(async (req, res, next) => {
+  const newUserData = {
+    name: req?.body?.name,
+    email: req?.body?.email,
+  };
+
+  const user = await User.findByIdAndUpdate(req.user._id, newUserData, {
+    new: true,
+  });
+
+  res.status(200).json({ user });
+});
+
+export const getAllUsers = catchAsyncError(async (req, res, next) => {
+  const users = await User.find();
+
+  res.status(200).json({ users });
+});
+
+export const getUserDetails = catchAsyncError(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    return next(new ErrorHandler("No user found", 404));
+  }
+  res.status(200).json({ user });
+});
+
+export const updateUser = catchAsyncError(async (req, res, next) => {
+  const newUserData = {
+    name: req?.body?.name,
+    email: req?.body?.email,
+    role: req?.body?.role,
+  };
+
+  const user = await User.findByIdAndUpdate(req.params.id, newUserData, {
+    new: true,
+  });
+
+  res.status(200).json({ user });
+});
+
+export const deleteUser = catchAsyncError(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    return next(new ErrorHandler("No user found", 404));
+  }
+  await user.deleteOne();
+
+  res.status(200).json({ success: true });
+});
